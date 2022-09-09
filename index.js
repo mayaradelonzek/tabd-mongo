@@ -4,7 +4,7 @@ const app = express()
 
 const mongoose = require('mongoose')
 
-const Person = require('./models/Person')
+const Animais = require('./models/Animais')
 
 app.use(
     express.urlencoded({
@@ -15,82 +15,83 @@ app.use(
 app.use(express.json())
 
 //rotas
-app.post('/person', async (req, res) => {
-    const { name, age } = req.body
-    const person = {
-        name,
-        age
+app.post('/animais', async (req, res) => {
+    const { raca, tamanho, filhote } = req.body
+    const animal = {
+        raca,
+        tamanho,
+        filhote
     }
 
     try {
-        await Person.create(person)
-        res.status(201).json({ message: 'Pessoa inserida' })
+        await Animais.create(animal)
+        res.status(201).json({ message: 'Animal inserido' })
     } catch (error) {
         res.status(500).json({ error: error })
     }
 })
 
-app.get('/person', async (req, res) => {
+app.get('/animais', async (req, res) => {
     try {
-        const people = await Person.find()
-        res.status(200).json(people)
+        const animal = await Animais.find()
+        res.status(200).json(animal)
     } catch(error) {
         res.status(500).json({ error: error })
     }
 })
 
-app.get(`/person/:id`, async (req, res) => {
+app.get(`/animais/:id`, async (req, res) => {
     const id = req.params.id
 
     try {
-        const person = await Person.findOne({ _id:id })
+        const animal = await Animais.findOne({ _id:id })
 
-        if(!person) {
-            res.status(422).json({ message: 'User not found' })
+        if(!animal) {
+            res.status(422).json({ message: 'Animal não encontrado' })
             return
         }
 
-        res.status(200).json(person)
+        res.status(200).json(animal)
         
     } catch(error) {
         res.status(500).json({ error: error })
     }
 })
 
-app.patch(`/person/:id`, async (req, res) => {
+app.patch(`/animais/:id`, async (req, res) => {
     const id = req.params.id
-    const { name, age } = req.body
+    const { raca, tamanho, filhote } = req.body
 
-    const person = {
-        name, age
+    const animal = {
+        raca, tamanho, filhote
     }
 
     try {
-        const updatedPerson = await Person.updateOne({_id:id}, person)
-            if (updatedPerson.matchedCount === 0) {
-                res.status(422).json({message: 'User not found'})
+        const updatedAnimal = await Animais.updateOne({_id:id}, animal)
+            if (updatedAnimal.matchedCount === 0) {
+                res.status(422).json({message: 'Animal não encontrado'})
                 return
             }
-            res.status(200).json(person)
+            res.status(200).json(animal)
     } catch (error) {
         res.status(500).json({ error: error })
     }
 })
 
-app.delete(`/person/:id`, async (req, res) => {
+app.delete(`/animais/:id`, async (req, res) => {
     const id = req.params.id
 
-    const person = await Person.findOne({_id:id})
+    const animal = await Animais.findOne({_id:id})
 
     try {
-        const person = await Person.deleteOne({ _id:id })
+        const animal = await Animais.deleteOne({ _id:id })
 
-        if(!person) {
-            res.status(422).json({ message: 'User not found' })
+        if(!animal) {
+            res.status(422).json({ message: 'Animal não encontrado' })
             return
         }
 
-        res.status(200).json({ message: 'Deleted user' })
+        res.status(200).json({ message: 'Animal deletado' })
 
         
     } catch(error) {
